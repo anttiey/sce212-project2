@@ -40,27 +40,32 @@ typedef struct CPU_State_Struct {
 
 /* You should decode your instructions from the
  * ASCII-binary format to this structured format */
-typedef struct inst_s {
+typedef struct inst_s
+{
     short opcode;
 
     /*R-type*/
     short func_code;
 
-    union {
+    union
+    {
         /* R-type or I-type: */
-        struct {
-	    unsigned char rs;
-	    unsigned char rt;
+        struct
+        {
+            unsigned char rs;
+            unsigned char rt;
 
-	    union {
-	        short imm;
+            union
+            {
+                short imm;
 
-	        struct {
-		    unsigned char rd;
-		    unsigned char shamt;
-		} r;
-	    } r_i;
-	} r_i;
+                struct
+                {
+                    unsigned char rd;
+                    unsigned char shamt;
+                } r;
+            } r_i;
+        } r_i;
         /* J-type: */
         uint32_t target;
     } r_t;

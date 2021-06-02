@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) {
     initialize(argv[argc-1]);
 
     //for checking parse result
-    //print_parse_result();
+    // print_parse_result();
 
     while (count != argc-1) {
 

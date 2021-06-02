@@ -12,20 +12,88 @@
 
 #include "util.h"
 #include "parse.h"
+#include "run.h"
 
 int text_size;
 int data_size;
 
+char* strcpy_part(char* copy, const char* origin, int start, int size) {
+
+    if(strlen(origin) > start) {
+
+        char *src = origin + start;
+        char *des = copy;
+
+        while(size > 0 && *src != '\0') {
+
+            *(des) = *(src);
+
+            des++;
+            src++;
+            size--;
+
+        }
+
+        *des = '\0';
+    }
+
+    return copy;
+}
+
+int toBinary(const char* origin, int start, int size)
+{
+    char temp[33];
+    strcpy_part(temp, origin, start, size);
+    return fromBinary(temp);
+}
+
 instruction parsing_instr(const char *buffer, const int index)
 {
-    instruction instr;
-	/** Implement this function */
-    return instr;
+
+    /** Implement this function */
+    
+    instruction instr_s;
+    instruction *instr = &instr_s;
+
+    char opcode[7];
+    strcpy_part(opcode, buffer, 0, 6);
+
+    uint32_t text = fromBinary(buffer);
+    mem_write_32((MEM_TEXT_START + index), text);
+    instr->value = text;
+
+    SET_OPCODE(instr, toBinary(buffer, 0, 6));
+
+    if(!strcmp(opcode, "000000")) {
+
+        SET_RS(instr, toBinary(buffer, 6, 5));
+        SET_RT(instr, toBinary(buffer, 11, 5));
+        SET_RD(instr, toBinary(buffer, 16, 5));
+        SET_SHAMT(instr, toBinary(buffer, 21, 5));
+        SET_FUNC(instr, toBinary(buffer, 26, 6));
+
+    } else if((!strcmp(opcode, "000010")) || (!strcmp(opcode, "000011"))) {
+
+        SET_TARGET(instr, toBinary(buffer, 6, 26));
+
+    } else {
+
+        SET_RS(instr, toBinary(buffer, 6, 5));
+        SET_RT(instr, toBinary(buffer, 11, 5));
+        SET_IMM(instr, toBinary(buffer, 16, 16));
+
+    }
+
+    return instr_s;
 }
 
 void parsing_data(const char *buffer, const int index)
 {
 	/** Implement this function */
+
+    uint32_t data = fromBinary(buffer);
+    mem_write_32((MEM_DATA_START + index), data);
+    
 }
 
 void print_parse_result()
